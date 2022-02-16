@@ -154,8 +154,7 @@ class AgentDQNPong(Agent):
         dones = torch.ByteTensor(np.array(dones, dtype=np.uint8))
 
         self.optimiser.zero_grad()
-
-        q_vals = self.net(states_t).gather(1, actions_t.unsqueeze(-1)).squeeze(-1)
+        q_vals = self.net(states_t).gather(1, actions_t.unsqueeze(-1).type(torch.int64)).squeeze(-1)
         new_state_vals = self.target_net(new_states_t).max(1)[0].detach()
         new_state_vals[dones] = 0
         expected_q_vals = rewards_t + self.GAMMA * new_state_vals
